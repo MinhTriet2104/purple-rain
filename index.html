@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Purple rain</title>
+    <style>
+        body {
+            padding-left: 50px;
+        }
+        #background {
+            background: rgb(230, 230, 250);
+            width: 600px;
+            height: 400px;
+            position: absolute;
+        }
+
+        #rains {
+            width: 600px;
+            height: 400px;
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .rain {
+            background: rgb(138, 43, 226);
+            background: linear-gradient(180deg, rgba(138, 43, 226, 0.39539565826330536) 0%, rgba(138, 43, 226, 0.8155637254901961) 100%);
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- make a BACKGROUND 600x400 -->
+    <div id="background"> 
+        <!-- AREA to append rain -->
+        <div id="rains"></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.0.js"></script>
+    <script>
+        const rains = []; //array to contain object rain
+        const listRain = []; //array to contain element with class rain
+
+        function randRange(min, max) {
+            return (Math.floor(Math.random() * (max - min + 1)) + min); //return a random number from min to max
+        }
+
+        function rain() {
+            this.top = randRange(-500, -50); //radom the top spawn
+            this.left = randRange(0, 600); //random the left spawn
+            this.distance = randRange(0, 25); //make a distance 25 is near and 0 is far far away
+            this.height = 13 + this.distance * 0.08; //the height of a rain is bigger when it near
+            this.width = 2 + this.distance * 0.05; //also the width
+        }
+
+        //Make a 400 rain
+        function setup() {
+            for (let i = 0; i < 400; i++) {
+                rains[i] = new rain();
+                //This array contain the element of rain
+                listRain.push(`<div class='rain' style='left:${rains[i].left}px; top:${rains[i].top}px; width:${rains[i].width}px; height:${rains[i].height}px;'></div>`);
+            }
+        }
+
+        //This will show the rain
+        function show() {
+            for (let i = 0; i < 400; i++) { 
+                //This will update the top of every single rain in listRain
+                listRain[i] = `<div class='rain' style='left:${rains[i].left}px; top:${rains[i].top}px; width: ${rains[i].width}px;height: ${rains[i].height}px;'></div>`;
+            }
+            $('#rains').html(listRain.join('')); //Print to the screen the listRain which contain element of rain
+        }
+
+        //Make the rain drop :V
+        function drop() {
+            for (let i = 0; i < rains.length; i++) {
+                //This is the gravity which make the rain drop faster when the top is higher
+                let gravity = Math.abs(rains[i].top * 0.02); 
+                //Add the gravity to the speed make it drop faster
+                let speed = 30 - rains[i].distance * 1; //And the distance make it drop slower when it near
+                //update the top of rains array
+                rains[i].top += (speed + gravity);
+            }
+        }
+
+        //This will check if the rain out of background
+        function check() {
+            for (let i = 0; i < rains.length; i++) {
+                //The heigh of background is 400 so if the rains top is bigger than 400 then random it again
+                if (rains[i].top > 400) {
+                    rains[i].top = randRange(-500, -50);
+                    rains[i].left = randRange(0, 600);
+                }
+            }
+        }
+
+        //This function will call all the function every 20 milisecond
+        function raining() {
+            drop();
+            show();
+            check();
+            setTimeout(raining, 20);
+        }
+
+        setup(); 
+        raining();
+    </script>
+</body>
+
+</html>
